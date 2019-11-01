@@ -2,6 +2,8 @@
  - Part 02
  - Lists, continued
  -}
+module Part02 where
+
 import Data.List (group)
 import Control.Applicative ((<**>))
 
@@ -189,8 +191,8 @@ slice xs i k | i > 0 = take (k - i + 1) $ drop (i - 1) xs
 -- notice `i>0` guard condition
 
 -- A solution using list comprehension:
-slice :: [a] -> Int -> Int -> [a]
-slice xs i k = [x | (x, j) <- zip xs [1..k], i <= j]
+slice' :: [a] -> Int -> Int -> [a]
+slice' xs i k = [x | (x, j) <- zip xs [1..k], i <= j]
 
 -- Zip, filter, unzip:
 slice'' :: [a] -> Int -> Int -> [a]

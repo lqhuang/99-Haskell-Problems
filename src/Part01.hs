@@ -2,6 +2,8 @@
  - Part 01
  - Lists
  -}
+module Part01 where
+
 import Data.List (group)
 
 

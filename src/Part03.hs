@@ -2,6 +2,10 @@
  - Part 03
  - Lists again
  -}
+import Data.List           (elemIndex)
+import Control.Applicative ((<$>))
+import System.Random
+import Part02              (removeAt)
 
 {-
  - Problem 21 Insert an element at a given position into a list.
@@ -49,35 +53,61 @@ range''' l r = scanl (+) l (replicate (l - r) 1)
 --     print $ range 0 10 2 == [0, 2, 4, 6, 8]
 --     print $ range 0 9 2 == [0, 2, 4, 6, 8]
 
+
 {-
  - Problem 23 Extract a given number of randomly selected elements from a list.
- - import System.Random (rnd_select)
  -}
+{-
+ - old version
+ - `n < 0` is redundant, because `take` function would check `n` argument.
 
+    rnd_select :: [a] -> Int -> [a]
+    rnd_select [] _ = []
+    rnd_select xs n
+        | n < 0     = error "number of elements must be greater than zero."
+        | otherwise = map (xs !!) $ take n $ randomRs (0, len-1) (mkStdGen 100)
+            where len = length xs
+ -}
+rnd_select :: [a] -> Int -> [a]
+rnd_select [] _ = []
+rnd_select xs n = map (xs !!) $ take n $ randomRs (0, len-1) (mkStdGen 100)
+    where len = length xs
 
+-- Use applicative and global random generator and result in different type signatures.
+rnd_select' :: [a] -> Int -> IO [a]
+rnd_select' [] _ = return []
+rnd_select' xs n = map (xs !!) <$> take n . randomRs (0, len-1) <$> getStdGen
+        where len = length xs
 
 -- test cases:
 main = do
     putStrLn "Problem 23"
-    print rnd_select "abcdefgh" 3 >>= putStrLn == "eda"
-
-
+    print $ rnd_select "abcdefgh" 3
+    print $ rnd_select "abcdefgh" 3 == "beg"
+    rnd_select' "abcdefgh" 3 >>= putStrLn
+    rnd_select' "abcdefgh" 3 >>= putStrLn
+    -- Note: notice that run last command twice will get totally the same result.
 
 {-
  - Problem 24 Lotto: Draw N different random numbers from the set 1..M.
- - import System.Random (diff_select)
  -}
+diff_select :: Int -> Int -> [Int]
+diff_select n m
+    | n > m         = error "Error: number of list must be greater than number of selected."
+    | otherwise     = rnd_select [1 .. m] n
 
 -- -- test cases:
 -- main = do
 --     putStrLn "Problem 24"
+--     print $ diff_select 6 49
 --     print $ diff_select 6 49 == [23, 1, 17, 33, 21, 37]
 
 
 {-
  - Problem 25 Generate a random permutation of the elements of a list.
- - import System.Random (rnd_permu)
  -}
+rnd_permu :: [a] -> [a]
+rnd_permu xs =
 
 -- -- test cases:
 -- main = do
@@ -92,8 +122,8 @@ main = do
  - For pure mathematicians, this result may be great.
  - But we want to really generate all the possibilities in a list.
  -}
-combinations :: Int -> [a] -> [[a]]
-combinations k xs |
+-- combinations :: Int -> [a] -> [[a]]
+-- combinations k xs |
 
 
 -- -- test cases:
