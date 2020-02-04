@@ -16,11 +16,11 @@ data ListItem a = Single a | Multiple Int a deriving (Show, Eq)
 
 encodeModified :: Eq a => [a] -> [ListItem a]
 encodeModified xs = map countDups $ group xs
-    where countDups xs = let dups_length = length xs
-                             element = head xs in
-                         if dups_length == 1
-                         then Single element
-                         else Multiple dups_length element
+  where countDups xs = let dups_length = length xs
+                           element     = head xs in
+                       if dups_length == 1
+                       then Single element
+                       else Multiple dups_length element
 -- too long?
 
 -- shorter
@@ -161,17 +161,17 @@ dropEvery'''' xs k = (snd . unzip . filter (\(i, _) -> i `mod` k /= 0) . zip [1.
 split :: [a] -> Int -> ([a], [a])
 split [] _ = ([], [])
 split all@(x:xs) n
-    | n <= 0 = ([], all)
-    | n == 1 = ([x], xs)  -- actually you could remove this condition but one more recursion
+    | n <= 0    = ([], all)
+    | n == 1    = ([x], xs)  -- actually you could remove this condition but one more recursion
     | otherwise = (x:first, rest)
-    where (first, rest) = split xs (n - 1)
+                  where (first, rest) = split xs (n - 1)
 
 -- Another foldl solution without defining tuple extractors:
 split'' :: [a] -> Int -> ([a], [a])
 split'' lst n = snd $ foldl helper (0, ([], [])) lst
-    where helper (i, (left, right)) x = if i >= n
-                                        then (i + 1, (left, right ++ [x]))
-                                        else (i + 1, (left ++ [x], right))
+  where helper (i, (left, right)) x = if i >= n
+                                      then (i + 1, (left, right ++ [x]))
+                                      else (i + 1, (left ++ [x], right))
 
 -- -- test cases:
 -- main = do
@@ -212,7 +212,9 @@ rotate :: [a] -> Int -> [a]
 rotate [] _ = []
 rotate xs 0 = xs
 rotate xs shift = reverse $ reverse first ++ reverse second
-    where (first, second) = if shift > 0 then splitAt shift xs else splitAt (length xs + shift) xs
+  where (first, second) = if shift > 0
+                          then splitAt shift xs
+                          else splitAt (length xs + shift) xs
 
 -- using cycle
 rotate' :: [a] -> Int -> [a]
@@ -240,9 +242,10 @@ removeAt k xs = (xs !! (k-1), take (k-1) xs ++ drop k xs)
 
 -- a safe version of that
 removeAt' :: Int -> [a] -> (Maybe a, [a])
-removeAt' n xs | n > 0 && n <= length xs = (Just (xs !! idx), take idx xs ++ drop n xs)
-               | otherwise = (Nothing, xs)
-               where idx = n - 1
+removeAt' n xs
+    | n > 0 && n <= length xs = (Just (xs !! idx), take idx xs ++ drop n xs)
+    | otherwise               = (Nothing, xs)
+                                where idx = n - 1
 
 -- another solution that also uses Maybe to indicate failure:
 removeAt'' :: Int -> [a] -> (Maybe a, [a])

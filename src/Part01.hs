@@ -11,9 +11,9 @@ import Data.List (group)
  - Problem 1: Find the last element of a list.
  -}
 myLast :: [a] -> a
-myLast [] = error "empty list"
-myLast [x] = x
-myLast (_:xs) = myLast xs
+myLast []       = error "empty list"
+myLast [x]      = x
+myLast (_ : xs) = myLast xs
 
 -- -- test cases:
 -- main = do
@@ -26,9 +26,9 @@ myLast (_:xs) = myLast xs
  - Problem 2: Find the last but one element of a list.
  -}
 myButLast :: [a] -> a
-myButLast [x] = error "only one element in list"
-myButLast [x, _] = x
-myButLast (_:xs) = myButLast xs
+myButLast [x]      = error "only one element in list"
+myButLast [x, _]   = x
+myButLast (_ : xs) = myButLast xs
 
 myButLast' = last . init
 
@@ -63,8 +63,8 @@ myLength' = sum . map (\_ -> 1)
 -- myLength' xs = sum . map (\_ -> 1) xs
 
 myLength'' :: [a] -> Int
-myLength'' [] =  0
-myLength'' (_:xs) =  1 + myLength'' xs
+myLength'' []       = 0
+myLength'' (_ : xs) = 1 + myLength'' xs
 
 -- -- test cases:
 -- main = do
@@ -77,8 +77,8 @@ myLength'' (_:xs) =  1 + myLength'' xs
  - Problem 5: Reverse a list.
  -}
 myReverse :: [a] -> [a]
-myReverse [] = []
-myReverse (x:xs) = myReverse xs ++ [x]  -- naive way LOL
+myReverse []       = []
+myReverse (x : xs) = myReverse xs ++ [x]  -- naive way LOL
 
 myReverse' :: [a] -> [a]
 myReverse' = foldl (flip (:)) []
@@ -96,13 +96,12 @@ myReverse' = foldl (flip (:)) []
  - A palindrome can be read forward or backward; e.g. (x a m a x).
  -}
 isPalindrome :: Eq a => [a] -> Bool
-isPalindrome [] = True
+isPalindrome []  = True
 isPalindrome [_] = True
-isPalindrome xs = if (head xs == last xs) then
-                      isPalindrome $ (tail . init) xs
+isPalindrome xs = if (head xs == last xs)
+                  then isPalindrome $ (tail . init) xs
                   else False
--- isPalindrome xs = (head xs) == (last xs) && (isPalindrome' $ init $ tail xs)
-
+isPalindrome' xs = (head xs) == (last xs) && (isPalindrome' $ init $ tail xs)
 isPalindrome'' xs = xs == (reverse xs)  -- more efficient or not? memeory/intermediate var/speed
 
 -- Here's one using foldr and zipWith.
@@ -131,9 +130,11 @@ flatten (List x) = concatMap flatten x
 
 -- test cases:
 main = do
-    putStrLn "Problem 7"
-    print $ flatten (Elem 5) == [5]
-    print $ flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]]) == [1, 2, 3, 4, 5]
+  putStrLn "Problem 7"
+  print $ flatten (Elem 5) == [5]
+  print
+    $  flatten (List [Elem 1, List [Elem 2, List [Elem 3, Elem 4], Elem 5]])
+    == [1, 2, 3, 4, 5]
     -- print $ flatten (List []) == []  -- FIXME: error?
 
 
@@ -143,15 +144,17 @@ main = do
  - The order of the elements should not be changed.
  -}
 compress :: Eq a => [a] -> [a]
-compress xs = foldr (\x acc -> if x == head acc then acc else x:acc) [last xs] (init xs)
+compress xs =
+  foldr (\x acc -> if x == head acc then acc else x : acc) [last xs] (init xs)
 -- this one is not so efficient, because it pushes the whole input onto the "stack" before doing anything else.
 -- why?
 
 -- Note that GHC erases the Maybes, producing efficient code.
 compress' :: Eq a => [a] -> [a]
 compress' xs = foldr skipDups (const []) xs Nothing
-    where skipDups x acc a@(Just q) | (x == q) = acc a
-          skipDups x acc _ = x : acc (Just x)
+  where
+    skipDups x acc a@(Just q) | (x == q) = acc a
+    skipDups x acc _                     = x : acc (Just x)
 
 compress'' :: Eq a => [a] -> [a]
 compress'' = map head . group

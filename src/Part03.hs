@@ -12,7 +12,7 @@ import Part02              (removeAt)
  -}
 insertAt :: a -> [a] -> Int -> [a]
 insertAt x xs idx = first ++ x : second
-    where (first, second) = splitAt (idx - 1) xs
+  where (first, second) = splitAt (idx - 1) xs
 
 -- -- test cases:
 -- main = do
@@ -24,19 +24,22 @@ insertAt x xs idx = first ++ x : second
  - Problem 22 Create a list containing all integers within a given range.
  -}
 range :: Int -> Int -> Int -> [Int]
-range start stop 1 = [start..stop]  -- Note that range list in haskell doesn't follow [,) rule.
+range start stop 1    = [start .. stop]  -- Note that range list in haskell doesn't follow [,) rule.
 range start stop step = [start, start + step .. real_stop]  -- Python-like range
-    where real_stop = if (stop-start) `mod` step == 0 then stop - step else stop
+  where real_stop = if (stop - start) `mod` step == 0
+                    then stop - step
+                    else stop
 -- TODO: how to implement/define optional arguments?
 
 range' :: Int -> Int -> Int -> [Int]
-range' start stop 1 = take (stop - start + 1)  $ iterate (+1) start
-range' start stop step = take ((stop - start + step) `div` step) $ iterate (+ step) start
+range' start stop 1 = take (stop - start + 1) $ iterate (+ 1) start
+range' start stop step =
+  take ((stop - start + step) `div` step) $ iterate (+ step) start
 
 -- pred/succ and handle start > stop condition
 range'' :: (Ord a, Enum a) => a -> a -> [a]
-range'' a b | (a == b) = [a]
-range'' a b = a:range'' ((if a < b then succ else pred) a) b
+range'' a b | a == b = [a]
+range'' a b          = a : range'' ((if a < b then succ else pred) a) b
 
 -- use scanl
 range''' :: Int -> Int -> [Int]
@@ -70,22 +73,22 @@ range''' l r = scanl (+) l (replicate (l - r) 1)
  -}
 rnd_select :: [a] -> Int -> [a]
 rnd_select [] _ = []
-rnd_select xs n = map (xs !!) $ take n $ randomRs (0, len-1) (mkStdGen 100)
-    where len = length xs
+rnd_select xs n = map (xs !!) $ take n $ randomRs (0, len - 1) (mkStdGen 100)
+                  where len = length xs
 
 -- Use applicative and global random generator and result in different type signatures.
 rnd_select' :: [a] -> Int -> IO [a]
 rnd_select' [] _ = return []
-rnd_select' xs n = map (xs !!) <$> take n . randomRs (0, len-1) <$> getStdGen
-        where len = length xs
+rnd_select' xs n = map (xs !!) <$> take n . randomRs (0, len - 1) <$> getStdGen
+                   where len = length xs
 
 -- test cases:
 main = do
-    putStrLn "Problem 23"
-    print $ rnd_select "abcdefgh" 3
-    print $ rnd_select "abcdefgh" 3 == "beg"
-    rnd_select' "abcdefgh" 3 >>= putStrLn
-    rnd_select' "abcdefgh" 3 >>= putStrLn
+  putStrLn "Problem 23"
+  print $ rnd_select "abcdefgh" 3
+  print $ rnd_select "abcdefgh" 3 == "beg"
+  rnd_select' "abcdefgh" 3 >>= putStrLn
+  rnd_select' "abcdefgh" 3 >>= putStrLn
     -- Note: notice that run last command twice will get totally the same result.
 
 {-
@@ -93,8 +96,8 @@ main = do
  -}
 diff_select :: Int -> Int -> [Int]
 diff_select n m
-    | n > m         = error "Error: number of list must be greater than number of selected."
-    | otherwise     = rnd_select [1 .. m] n
+  | n > m     = error "Error: number of list must be greater than number of selected."
+  | otherwise = rnd_select [1 .. m] n
 
 -- -- test cases:
 -- main = do
@@ -106,8 +109,8 @@ diff_select n m
 {-
  - Problem 25 Generate a random permutation of the elements of a list.
  -}
-rnd_permu :: [a] -> [a]
-rnd_permu xs =
+-- rnd_permu :: [a] -> [a]
+-- rnd_permu xs =
 
 -- -- test cases:
 -- main = do
